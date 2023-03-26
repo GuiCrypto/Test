@@ -3,6 +3,7 @@ import Intro from "./components/Intro/";
 import Setup from "./components/Setup";
 import Demo from "./components/Demo";
 import Footer from "./components/Footer";
+import Storeguilhain from "./components/Storeguilhain";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Setup />
           <hr /> */}
           <Demo />
+          <Storeguilhain />
           {/* <hr />
           <Footer /> */}
         </div>

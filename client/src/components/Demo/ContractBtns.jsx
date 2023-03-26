@@ -1,12 +1,15 @@
 import { useState } from "react";
 import useEth from "../../contexts/EthContext/useEth";
 
-function ContractBtns({ setValue, setText }) {
-  const { state: { contract, accounts } } = useEth();
+function ContractBtns({ setValue, setText}) {
+  const {
+    state: { contract, accounts },
+  } = useEth();
   const [inputValue, setInputValue] = useState("");
-  const [inputText, setInputText] = useState("");
+  const [greetText, setGreetText] = useState("");
+  const [greetTextFromContract, setGreetTextFromContract] = useState("");
 
-  const handleInputChange = e => {
+  const handleInputChange = (e) => {
     if (/^\d+$|^$/.test(e.target.value)) {
       setInputValue(e.target.value);
     }
@@ -17,7 +20,7 @@ function ContractBtns({ setValue, setText }) {
     setValue(value);
   };
 
-  const write = async e => {
+  const write = async (e) => {
     if (e.target.tagName === "INPUT") {
       return;
     }
@@ -29,58 +32,74 @@ function ContractBtns({ setValue, setText }) {
     await contract.methods.write(newValue).send({ from: accounts[0] });
   };
 
-  const handleInputTextChange = e => {
-      setInputText(e.target.value);
+  const handleInputTextChange = (e) => {
+    setGreetText(e.target.value);
   };
-
 
   const greet = async () => {
     const text = await contract.methods.greet().call({ from: accounts[0] });
-    setText(text);
+    setGreetTextFromContract(text);
   };
 
-
-  const setGreet = async e => {
-    if (e.target.tagName === "INPUT") {
-      return;
-    }
-    if (inputText === "") {
-      alert("Please enter a string value to write.");
-      return;
-    }
-    const newText = inputText;
+  const sendGreetText = async (e) => {
+    // if (e.target.tagName === "INPUT") {
+    //   return;
+    // // }
+    // if (inputText === "") {
+    //   alert("Please enter a string value to write.");
+    //   return;
+    // }
+    const newText = greetText;
     await contract.methods.setGreet(newText).send({ from: accounts[0] });
   };
-  
+
   return (
-    <div className="btns">
+    <div>
+      <div className="btns">
+        <button onClick={read}>read()</button>
 
-      <button onClick={read}>
-        read()
-      </button>
+        <div onClick={write} className="input-btn">
+          write(
+          <input
+            type="text"
+            placeholder="uint"
+            value={inputValue}
+            onChange={handleInputChange}
+          />
+          )
+          <button onClick={sendGreetText}>send</button>
+        </div>
 
-      <div onClick={write} className="input-btn">
-        write(<input
-          type="text"
-          placeholder="uint"
-          value={inputValue}
-          onChange={handleInputChange}
-        />)
+        <button onClick={greet}>greet()</button>
+
+        <div onClick={sendGreetText} className="input-btn">
+          setGreet(
+          <input
+            type="text"
+            placeholder="string"
+            value={greetText}
+            onChange={handleInputTextChange}
+          />
+          )
+        </div>
       </div>
 
-      <button onClick={greet}>
-        greet()
-      </button>
-
-      <div onClick={setGreet} className="input-btn">
-        setGreet(<input
-          type="text"
-          placeholder="string"
-          value={inputText}
-          onChange={handleInputTextChange}
-        />)
+      <div>
+        <label>
+          setGreet
+          <input
+            type="text"
+            placeholder="string"
+            value={greetText}
+            onChange={handleInputTextChange}
+          />
+        </label>
+        <button onClick={sendGreetText}>send</button>
       </div>
-
+      <div>
+        <button onClick={greet}>greet()</button>
+      </div>
+      <div>{greetTextFromContract}</div>
     </div>
   );
 }
